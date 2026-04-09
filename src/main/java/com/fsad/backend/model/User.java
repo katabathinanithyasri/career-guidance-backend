@@ -1,6 +1,6 @@
 package com.fsad.backend.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
 @Entity
@@ -15,13 +15,12 @@ public class User {
     private String password;
     private String role;
 
-    // ✅ Nullable and safe serialization
-    @ManyToOne
-    @JoinColumn(name = "counselor_id", foreignKey = @ForeignKey(name = "FK_user_counselor"), nullable = true)
-    @JsonBackReference // avoids infinite recursion
+    @ManyToOne(fetch = FetchType.EAGER)  // fetch counselor immediately
+    @JoinColumn(name = "counselor_id", nullable = true)
+    @JsonIgnoreProperties({"sessions", "users"}) // avoid infinite recursion
     private Counselor counselor;
 
-    // ✅ Getters & Setters
+    // Getters & Setters
     public Long getId() { return id; }
 
     public String getName() { return name; }
